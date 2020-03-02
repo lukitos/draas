@@ -1,0 +1,9 @@
+{
+    "refreshToken": "<your_token>",
+    "orgId": "<your_id>",
+    "sddcId": "<your_id>",
+    "segmentName": "<your_segment>",
+    "segmentConnectivity": "<ON (for Routed) or OFF (for Disconnected)>",
+    "segmentGateway": "<your_gateway>",
+    "segmentSubnet": "<your_subnet>"
+}
