@@ -1,4 +1,5 @@
 const axios = require('axios').default;
+const fs = require('fs');
 
 const { 
     refreshToken, 
@@ -7,16 +8,27 @@ const {
     segmentName, 
     segmentGateway,
     segmentSubnet,
-    segmentConnectivity } = require('./config.json');
+    logPath } = require('./config.json');
 
 const authURL = `https://console.cloud.vmware.com/csp/gateway/am/api/auth/api-tokens/authorize?refresh_token=${refreshToken}`;
 const orgURL = `https://vmc.vmware.com/vmc/api/orgs/${orgId}/sddcs/${sddcId}`;
+    
+var segmentConnectivity = 'OFF';
 
 const updateNetworkSegment = (bearerToken, policyURL, segments) => {
+    
     segments.forEach(element => {
         if (element.display_name === segmentName) {
-            console.log(element);
+            // console.log(element);
+
+            fs.writeFile(logPath, JSON.stringify(element), function (err) {
+                if (err) throw err;
+                console.log(`Successfully saved log file in ${logPath}!`);
+            });
+
             updateSegmentURL = `${policyURL}/policy/api/v1/infra/tier-1s/cgw/segments/${element.id}`;
+            if (element.type === 'DISCONNECTED')
+                segmentConnectivity = 'ON';
             const data = {
                 display_name: segmentName,
                 advanced_config: {
@@ -35,7 +47,7 @@ const updateNetworkSegment = (bearerToken, policyURL, segments) => {
             };
             axios.patch(`${updateSegmentURL}`, data, options)
             .then(function (response) {
-                console.log(response.data);
+                console.log(`Successfully updated the network segment to ${segmentConnectivity}`);
             })
             .catch(function (error) {
                 console.log(error);
