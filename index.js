@@ -15,15 +15,18 @@ const orgURL = `https://vmc.vmware.com/vmc/api/orgs/${orgId}/sddcs/${sddcId}`;
     
 var segmentConnectivity = 'OFF';
 
+fs.writeFile(logPath, 'Running in index.js...', function (err) {
+    if (err) throw err;
+    console.log(`Successfully saved log file in ${logPath}!`);
+});
+
 const updateNetworkSegment = (bearerToken, policyURL, segments) => {
     
     segments.forEach(element => {
         if (element.display_name === segmentName) {
-            // console.log(element);
-
-            fs.writeFile(logPath, JSON.stringify(element), function (err) {
+            fs.appendFile(logPath, JSON.stringify(element), function (err) {
                 if (err) throw err;
-                console.log(`Successfully saved log file in ${logPath}!`);
+                console.log(`Successfully appended element to ${logPath}!`);
             });
 
             updateSegmentURL = `${policyURL}/policy/api/v1/infra/tier-1s/cgw/segments/${element.id}`;
